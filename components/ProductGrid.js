@@ -14,16 +14,17 @@ export default function ProductGrid() {
         const { data, error } = await supabase
           .from('fish')
           .select('*')
+          .eq('is_featured', true)
           .order('created_at', { ascending: false });
 
         if (error) {
-          console.error('Error fetching fish:', error);
+          console.error('Error fetching fish:', error.message, error);
           // Fallback if table doesn't exist or error occurs
           setProducts([
-            { id: 1, name: "Super Red Halfmoon", price: "₱1,200", image_url: "/1.jpg" },
-            { id: 2, name: "Avatar Crowntail", price: "₱1,500", image_url: "/2.jpg" },
-            { id: 3, name: "Blue Rim Plakat", price: "₱2,000", image_url: "/3.jpg" },
-            { id: 4, name: "Koi Galaxy Nemo", price: "₱1,800", image_url: "/6.jpg" },
+            { id: 1, name: "Super Red Halfmoon", price: "₱1,200", image_url: "/b1.webp" },
+            { id: 2, name: "Avatar Crowntail", price: "₱1,500", image_url: "/b2.webp" },
+            { id: 3, name: "Blue Rim Plakat", price: "₱2,000", image_url: "/b3.webp" },
+            { id: 4, name: "Koi Galaxy Nemo", price: "₱1,800", image_url: "/b4.webp" },
           ]);
         } else if (data && data.length > 0) {
           setProducts(data);
@@ -41,8 +42,6 @@ export default function ProductGrid() {
     fetchProducts();
   }, []);
 
-  const displayedProducts = showAll ? products : products.slice(0, 4);
-
   if (loading) {
     return (
       <section id="collection" className="py-20 px-6 max-w-7xl mx-auto text-center">
@@ -58,23 +57,21 @@ export default function ProductGrid() {
           <h2 className="text-3xl md:text-5xl mb-4">Featured Collection</h2>
           <p className="text-muted">Hand-picked competition grade specimens.</p>
         </div>
-        {products.length > 4 && (
-          <button 
-            onClick={() => setShowAll(!showAll)}
-            className="hidden md:block text-accent uppercase tracking-widest text-sm font-semibold border-b border-accent pb-1"
-          >
-            {showAll ? 'Show Featured' : 'View All Collection'}
-          </button>
-        )}
+        <a 
+          href="/collection"
+          className="hidden md:block text-accent uppercase tracking-widest text-sm font-semibold border-b border-accent pb-1"
+        >
+          View All Collection
+        </a>
       </div>
 
       {products.length === 0 ? (
         <div className="text-center py-20 text-muted italic">
-          No specimens currently available. Check back soon.
+          No featured specimens currently available. Check back soon.
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-          {displayedProducts.map((product, index) => (
+          {products.slice(0, 4).map((product, index) => (
             <div 
               key={product.id} 
               className="group animate-fade-in"
@@ -110,14 +107,12 @@ export default function ProductGrid() {
         </div>
       )}
       
-      {products.length > 4 && (
-        <button 
-          onClick={() => setShowAll(!showAll)}
-          className="md:hidden w-full mt-10 border border-white/20 py-4 uppercase tracking-[0.2em] text-xs"
-        >
-          {showAll ? 'Show Featured' : 'View All Collection'}
-        </button>
-      )}
+      <a 
+        href="/collection"
+        className="md:hidden block text-center w-full mt-10 border border-white/20 py-4 uppercase tracking-[0.2em] text-xs"
+      >
+        View All Collection
+      </a>
     </section>
   );
 }

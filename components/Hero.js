@@ -19,7 +19,7 @@ export default function Hero() {
           Discover our curated collection of competition-grade Betta fish.
         </p>
         <div className="flex flex-col md:flex-row gap-4 justify-center">
-          <button className="btn-primary text-base px-10 py-4">Explore Collection</button>
+          <a href="#collection" className="btn-primary text-base px-10 py-4 inline-block">Explore Collection</a>
           <a 
             href="https://shopee.ph/davidstalisayonline" 
             target="_blank" 

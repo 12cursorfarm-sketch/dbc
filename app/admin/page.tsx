@@ -10,6 +10,7 @@ interface Fish {
   price: string;
   shopee_link: string | null;
   image_url: string | null;
+  is_featured: boolean;
   created_at: string;
 }
 
@@ -23,6 +24,7 @@ export default function AdminDashboard() {
     name: '',
     price: '',
     shopee_link: '',
+    is_featured: false,
   });
   const [image, setImage] = useState<File | null>(null);
 
@@ -38,12 +40,19 @@ export default function AdminDashboard() {
       .select('*')
       .order('created_at', { ascending: false });
     
-    if (data) setFishList(data);
-    if (error) console.error('Error fetching fish:', error);
+    if (data) {
+      // Ensure boolean type for is_featured
+      const formattedData = data.map(f => ({
+        ...f,
+        is_featured: !!f.is_featured
+      }));
+      setFishList(formattedData);
+    }
+    if (error) console.error('Error fetching fish:', error.message, error);
   };
 
   const handleReset = () => {
-    setFormData({ name: '', price: '', shopee_link: '' });
+    setFormData({ name: '', price: '', shopee_link: '', is_featured: false });
     setImage(null);
     setEditingFish(null);
     setView('list');
@@ -68,8 +77,30 @@ export default function AdminDashboard() {
       name: fish.name,
       price: fish.price,
       shopee_link: fish.shopee_link || '',
+      is_featured: fish.is_featured,
     });
     setView('edit');
+  };
+
+  const toggleFeatured = async (fish: Fish) => {
+    const featuredCount = fishList.filter(f => f.is_featured).length;
+    
+    if (!fish.is_featured && featuredCount >= 4) {
+      setMessage({ type: 'error', text: 'Maximum of 4 featured fish allowed.' });
+      return;
+    }
+
+    const { error } = await supabase
+      .from('fish')
+      .update({ is_featured: !fish.is_featured })
+      .eq('id', fish.id);
+
+    if (error) {
+      setMessage({ type: 'error', text: 'Failed to update: ' + error.message });
+    } else {
+      fetchFish();
+      setMessage({ type: 'success', text: fish.is_featured ? 'Removed from featured.' : 'Marked as featured.' });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -103,6 +134,7 @@ export default function AdminDashboard() {
         price: formData.price,
         shopee_link: formData.shopee_link,
         image_url: imageUrl,
+        is_featured: formData.is_featured,
       };
 
       if (view === 'edit' && editingFish) {
@@ -199,6 +231,7 @@ export default function AdminDashboard() {
                     <tr className="border-b border-white/5 bg-white/[0.02]">
                       <th className="px-6 py-5 text-[10px] uppercase tracking-[0.2em] font-black text-accent/80">Specimen</th>
                       <th className="px-6 py-5 text-[10px] uppercase tracking-[0.2em] font-black text-accent/80">Pricing</th>
+                      <th className="px-6 py-5 text-[10px] uppercase tracking-[0.2em] font-black text-accent/80">Featured</th>
                       <th className="px-6 py-5 text-[10px] uppercase tracking-[0.2em] font-black text-accent/80">Market Link</th>
                       <th className="px-6 py-5 text-[10px] uppercase tracking-[0.2em] font-black text-accent/80 text-right">Actions</th>
                     </tr>
@@ -222,6 +255,16 @@ export default function AdminDashboard() {
                           </div>
                         </td>
                         <td className="px-6 py-4 text-sm font-light text-zinc-400">{fish.price}</td>
+                        <td className="px-6 py-4">
+                          <button 
+                            onClick={() => toggleFeatured(fish)}
+                            className={`p-1.5 rounded-full transition-all ${fish.is_featured ? 'bg-accent/20 text-accent ring-1 ring-accent/40' : 'bg-white/5 text-muted/40 hover:text-muted'}`}
+                          >
+                            <svg className="w-4 h-4" fill={fish.is_featured ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.54 1.118l-3.976-2.888a1 1 0 00-1.175 0l-3.976 2.888c-.784.57-1.838-.196-1.539-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.382-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                            </svg>
+                          </button>
+                        </td>
                         <td className="px-6 py-4">
                           {fish.shopee_link ? (
                             <a href={fish.shopee_link} target="_blank" className="text-accent/60 hover:text-accent text-xs underline underline-offset-4 decoration-accent/20 transition-all">Shopee Store</a>
@@ -295,6 +338,24 @@ export default function AdminDashboard() {
                       value={formData.shopee_link}
                       onChange={(e) => setFormData({ ...formData, shopee_link: e.target.value })}
                     />
+                  </div>
+
+                  <div className="flex items-center gap-3 py-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const featuredCount = fishList.filter(f => f.is_featured).length;
+                        if (!formData.is_featured && featuredCount >= 4) {
+                          setMessage({ type: 'error', text: 'Maximum of 4 featured fish allowed. Please remove another fish first.' });
+                          return;
+                        }
+                        setFormData({ ...formData, is_featured: !formData.is_featured });
+                      }}
+                      className={`w-12 h-6 rounded-full transition-all relative ${formData.is_featured ? 'bg-accent' : 'bg-white/10'}`}
+                    >
+                      <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${formData.is_featured ? 'right-1' : 'left-1'}`}></div>
+                    </button>
+                    <span className="text-xs uppercase tracking-widest text-muted/60">Feature this specimen (Max 4)</span>
                   </div>
 
                   <div className="space-y-2">
