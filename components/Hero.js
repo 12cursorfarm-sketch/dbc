@@ -20,9 +20,14 @@ export default function Hero() {
         </p>
         <div className="flex flex-col md:flex-row gap-4 justify-center">
           <button className="btn-primary text-base px-10 py-4">Explore Collection</button>
-          <button className="px-10 py-4 border border-white/20 uppercase tracking-widest text-sm hover:bg-white hover:text-black transition-all">
-            Join our Community
-          </button>
+          <a 
+            href="https://shopee.ph/davidstalisayonline" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="px-10 py-4 border border-white/20 uppercase tracking-widest text-sm hover:bg-white hover:text-black transition-all inline-block"
+          >
+            Shop Now
+          </a>
         </div>
       </div>
       

@@ -48,7 +48,6 @@ export default function Home() {
       <section id="guarantee" className="py-24 px-6 max-w-7xl mx-auto border-t border-white/10">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <div className="animate-fade-in">
-            <span className="text-accent font-semibold tracking-widest uppercase text-xs mb-6 block">Arrive Alive Guarantee</span>
             <h2 className="text-3xl md:text-5xl mb-8 leading-tight">Notice: <span className="text-accent">[TAKE YOUR OWN RISK]</span></h2>
             
             <div className="space-y-6 text-muted text-lg leading-relaxed mb-8 font-light">
@@ -68,29 +67,19 @@ export default function Home() {
               </div>
             </div>
             
-            <div className="flex items-center gap-4">
-              <div className="h-0.5 w-12 bg-accent/40"></div>
-              <p className="text-xs uppercase tracking-[0.3em] text-muted">Premium Livestock Assurance</p>
-            </div>
           </div>
           
           <div className="animate-fade-in relative group" style={{ animationDelay: '0.2s' }}>
             <div className="absolute -inset-4 bg-accent/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
             <div className="relative aspect-square overflow-hidden border border-white/10 bg-white/5 rounded-2xl">
               <img 
-                src="/tyor.jpg" 
+                src="./tyor.jpg" 
                 alt="David's Betta Care Premium Specimen" 
                 className="w-full h-full object-cover grayscale-[0.2] hover:grayscale-0 transition-all duration-700 scale-100 hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60"></div>
               <div className="absolute bottom-6 left-6 right-6">
-                <div className="flex justify-between items-end">
-                  <div>
-                    <p className="text-white/40 text-[10px] uppercase tracking-[0.2em] mb-1">Livestock Policy</p>
-                    <p className="text-white font-serif italic text-lg line-clamp-1">Excellence in every delivery</p>
-                  </div>
-                  <div className="text-accent text-3xl font-serif">20-30%</div>
-                </div>
+               
               </div>
             </div>
           </div>
