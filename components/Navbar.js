@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
@@ -9,6 +9,19 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState(null);
   const supabase = createClient();
+  const navRef = useRef(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.gsap) {
+      window.gsap.from(navRef.current, {
+        y: -100,
+        opacity: 0,
+        duration: 1,
+        ease: "power3.out",
+        delay: 0.2
+      });
+    }
+  }, []);
 
   useEffect(() => {
     const getUser = async () => {
@@ -25,7 +38,7 @@ export default function Navbar() {
   }, [supabase.auth]);
 
   return (
-    <nav className="fixed w-full z-50 bg-black/80 backdrop-blur-md border-b border-white/5 px-6 py-3 transition-all duration-300">
+    <nav ref={navRef} className="fixed w-full z-50 bg-black/80 backdrop-blur-md border-b border-white/5 px-6 py-3 transition-colors duration-300">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <Link href="/" className="flex items-center gap-3 transition-transform hover:scale-105 active:scale-95 group">
           <div className="relative w-10 h-10 md:w-12 md:h-12 overflow-hidden rounded-full border-2 border-accent">

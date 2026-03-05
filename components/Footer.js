@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <footer className="bg-black py-20 px-6 border-t border-white/5">
+    <footer className="bg-black py-20 px-6 border-t border-white/20">
       <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-16 md:gap-8">
         <div className="animate-fade-in">
           <h3 className="text-3xl font-serif mb-6 text-white uppercase tracking-tighter">David's <span className="text-accent">Betta Care</span></h3>

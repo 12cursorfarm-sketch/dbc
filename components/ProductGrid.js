@@ -1,12 +1,37 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 
 export default function ProductGrid() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAll, setShowAll] = useState(false);
+  const gridRef = useRef(null);
+  const headerRef = useRef(null);
+
+  useEffect(() => {
+    if (!loading && typeof window !== "undefined" && window.gsap && window.ScrollTrigger) {
+      if (headerRef.current) {
+        window.gsap.fromTo(headerRef.current,
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, duration: 1, ease: "power3.out", scrollTrigger: { trigger: headerRef.current, start: "top 85%" } }
+        );
+      }
+      if (gridRef.current && gridRef.current.children.length > 0) {
+        window.gsap.fromTo(gridRef.current.children,
+          { y: 50, opacity: 0 },
+          {
+            y: 0, opacity: 1, duration: 0.8, stagger: 0.1, ease: "power3.out",
+            scrollTrigger: {
+              trigger: gridRef.current,
+              start: "top 85%",
+            }
+          }
+        );
+      }
+    }
+  }, [loading, products]);
 
   useEffect(() => {
     async function fetchProducts() {
@@ -51,8 +76,8 @@ export default function ProductGrid() {
   }
 
   return (
-    <section id="collection" className="py-20 px-6 max-w-7xl mx-auto">
-      <div className="flex justify-between items-end mb-16 animate-fade-in">
+    <section id="collection" className="py-20 px-6 max-w-7xl mx-auto overflow-hidden">
+      <div ref={headerRef} className="flex justify-between items-end mb-16 opacity-0">
         <div>
           <h2 className="text-3xl md:text-5xl mb-4">Featured Collection</h2>
           <p className="text-muted">Hand-picked competition grade specimens.</p>
@@ -70,12 +95,11 @@ export default function ProductGrid() {
           No featured specimens currently available. Check back soon.
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10">
+        <div ref={gridRef} className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10">
           {products.slice(0, 4).map((product, index) => (
             <div 
               key={product.id} 
-              className="group animate-fade-in flex flex-col items-center text-center"
-              style={{ animationDelay: `${index * 0.1}s` }}
+              className="group flex flex-col items-center text-center opacity-0"
             >
               <div className="w-full aspect-square bg-white/5 overflow-hidden rounded-[2.5rem] border-2 border-white/5 relative mb-6 transition-all duration-500 group-hover:border-accent/30 group-hover:shadow-[0_20px_50px_rgba(251,129,34,0.15)]">
                 <img 

@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useRef } from 'react';
+
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import AgentGrid from "../components/AgentGrid";
@@ -8,14 +10,38 @@ import Footer from "../components/Footer";
 import LegacyVideo from "../components/LegacyVideo";
 
 export default function Home() {
+  const legacyRef = useRef<HTMLDivElement>(null);
+  const guaranteeRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const w = window as any;
+    if (typeof window !== "undefined" && w.gsap && w.ScrollTrigger) {
+      const gsap = w.gsap;
+      
+      if (legacyRef.current) {
+        gsap.fromTo(legacyRef.current.children, 
+          { y: 50, opacity: 0 },
+          { y: 0, opacity: 1, duration: 1, stagger: 0.2, ease: "power3.out", scrollTrigger: { trigger: legacyRef.current, start: "top 80%" } }
+        );
+      }
+      
+      if (guaranteeRef.current) {
+        gsap.fromTo(guaranteeRef.current.children, 
+          { y: 50, opacity: 0 },
+          { y: 0, opacity: 1, duration: 1, stagger: 0.2, ease: "power3.out", scrollTrigger: { trigger: guaranteeRef.current, start: "top 80%" } }
+        );
+      }
+    }
+  }, []);
+
   return (
     <main className="min-h-screen bg-black overflow-hidden">
       <Navbar />
       <Hero />
       
       <section className="py-32 px-6 max-w-7xl mx-auto border-b border-white/5">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <div className="animate-fade-in">
+        <div ref={legacyRef} className="grid lg:grid-cols-2 gap-16 items-center">
+          <div className="opacity-0">
             <span className="text-accent font-semibold tracking-widest uppercase text-xs mb-6 block">Our Heritage</span>
             <h2 className="text-4xl md:text-6xl mb-8 leading-tight">Our Legacy</h2>
             <p className="text-muted max-w-xl text-lg md:text-xl font-light leading-relaxed mb-8">
@@ -27,7 +53,7 @@ export default function Home() {
             <p className="text-sm text-muted uppercase tracking-[0.2em]">Established Excellence</p>
           </div>
           
-          <div className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
+          <div className="opacity-0" style={{ animationDelay: '0.2s' }}>
             <LegacyVideo />
           </div>
         </div>
@@ -37,7 +63,12 @@ export default function Home() {
       
       <section className="bg-secondary py-20 px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16 animate-fade-in">
+          <div className="text-center mb-16 opacity-0" ref={(el) => {
+            const w = window as any;
+            if (el && typeof window !== "undefined" && w.gsap && w.ScrollTrigger) {
+              w.gsap.fromTo(el, { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 1, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 85%" } });
+            }
+          }}>
             <h2 className="text-3xl md:text-5xl mb-4">Our Professional Agents</h2>
             <p className="text-muted">Directly contact our authorized agents on Facebook.</p>
           </div>
@@ -46,8 +77,8 @@ export default function Home() {
       </section>
 
       <section id="guarantee" className="py-24 px-6 max-w-7xl mx-auto border-t border-white/10">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <div className="animate-fade-in">
+        <div ref={guaranteeRef} className="grid lg:grid-cols-2 gap-16 items-center">
+          <div className="opacity-0">
             <h2 className="text-3xl md:text-5xl mb-8 leading-tight">Notice: <span className="text-accent">[TAKE YOUR OWN RISK]</span></h2>
             
             <div className="space-y-6 text-muted text-lg leading-relaxed mb-8 font-light">
@@ -69,7 +100,7 @@ export default function Home() {
             
           </div>
           
-          <div className="animate-fade-in relative group" style={{ animationDelay: '0.2s' }}>
+          <div className="opacity-0 relative group">
             <div className="absolute -inset-4 bg-accent/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
             <div className="relative aspect-square overflow-hidden border border-white/10 bg-white/5 rounded-2xl">
               <img 

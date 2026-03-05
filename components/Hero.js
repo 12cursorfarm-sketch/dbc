@@ -1,8 +1,40 @@
+import { useEffect, useRef } from 'react';
+
 export default function Hero() {
+  const heroRef = useRef(null);
+  const contentRef = useRef(null);
+  const bgRef = useRef(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.gsap) {
+      const gsap = window.gsap;
+      const ScrollTrigger = window.ScrollTrigger;
+      
+      const tl = gsap.timeline();
+      tl.fromTo(contentRef.current.children, 
+        { y: 50, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1, stagger: 0.2, ease: "power3.out", delay: 0.5 }
+      );
+
+      if (ScrollTrigger) {
+        gsap.to(bgRef.current, {
+          yPercent: 30,
+          ease: "none",
+          scrollTrigger: {
+            trigger: heroRef.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: true
+          }
+        });
+      }
+    }
+  }, []);
+
   return (
-    <section className="relative h-[90vh] flex items-center justify-center pt-20 overflow-hidden bg-black">
+    <section ref={heroRef} className="relative h-[90vh] flex items-center justify-center pt-20 overflow-hidden bg-black">
       {/* YouTube Background Video */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+      <div ref={bgRef} className="absolute inset-0 z-0 overflow-hidden pointer-events-none scale-[1.2]">
         <iframe
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full w-[177.78vh] h-[56.25vw] object-cover scale-150 opacity-40"
           src="https://www.youtube.com/embed/34MDwL-WkXg?autoplay=1&mute=1&loop=1&playlist=34MDwL-WkXg&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
@@ -14,7 +46,7 @@ export default function Hero() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black/60"></div>
       </div>
 
-      <div className="relative z-10 text-center px-6 max-w-4xl animate-fade-in">
+      <div ref={contentRef} className="relative z-10 text-center px-6 max-w-4xl">
         <span className="text-accent font-bold tracking-[0.4em] uppercase text-xs mb-6 block bg-accent/10 py-2 px-4 rounded-full w-fit mx-auto">
           PAETE'S FINEST BETTA FISH
         </span>
@@ -38,7 +70,7 @@ export default function Hero() {
           </a>
         </div>
         
-        <div className="mt-10 pt-6 border-t border-white/10 inline-flex flex-wrap justify-center items-center gap-x-3 gap-y-2 text-sm text-muted animate-fade-in tracking-wider" style={{ animationDelay: '0.2s' }}>
+        <div className="mt-10 pt-6 border-t border-white/10 inline-flex flex-wrap justify-center items-center gap-x-3 gap-y-2 text-sm text-muted tracking-wider">
           <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Shopee_logo.svg" alt="Shopee" className="w-6 h-6 object-contain" />
           <div className="flex items-center gap-1">
             <div className="flex text-accent">

@@ -11,17 +11,34 @@ const agents = [
   { name: "Dbc Janine", url: "https://www.facebook.com/search/people/?q=dbc", img: "/8.jpg" },
 ];
 
+import { useEffect, useRef } from "react";
+
 export default function AgentGrid() {
+  const gridRef = useRef(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.gsap && window.ScrollTrigger && gridRef.current) {
+      window.gsap.fromTo(gridRef.current.children,
+        { y: 50, opacity: 0 },
+        {
+          y: 0, opacity: 1, duration: 0.8, stagger: 0.1, ease: "power3.out",
+          scrollTrigger: {
+            trigger: gridRef.current,
+            start: "top 85%",
+          }
+        }
+      );
+    }
+  }, []);
   return (
-    <div id="agents" className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10">
+    <div id="agents" ref={gridRef} className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10">
       {agents.map((agent, index) => (
         <a 
           key={index} 
           href={agent.url} 
           target="_blank" 
           rel="noopener noreferrer"
-          className="group relative block aspect-[4/5] overflow-hidden bg-secondary rounded-[2rem] border border-white/5 animate-fade-in transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-accent/20"
-          style={{ animationDelay: `${index * 0.1}s` }}
+          className="group relative block aspect-[4/5] overflow-hidden bg-secondary rounded-[2rem] border border-white/5 opacity-0 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-accent/20"
         >
           <img 
             src={agent.img} 
